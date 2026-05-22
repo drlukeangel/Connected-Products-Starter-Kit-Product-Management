@@ -1,0 +1,40 @@
+[package]
+name = "connected-product-firmware"
+version = "0.1.0"
+edition = "2021"
+authors = ["Luke Angel <luke@lukeangel.co>"]
+description = "Production-shaped device firmware for the Connected Products Starter Kit. Targets ESP32-C3; uses esp-idf-hal + esp-mqtt with mTLS to AWS IoT Core."
+license = "MIT"
+
+[[bin]]
+name = "connected-product-firmware"
+path = "src/main.rs"
+
+[dependencies]
+esp-idf-svc = { version = "0.49", features = ["std", "binstart"] }
+esp-idf-hal = "0.44"
+esp-idf-sys = { version = "0.35", features = ["binstart"] }
+embedded-svc = "0.28"
+embedded-hal = "1.0"
+log = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+heapless = "0.8"
+uuid = { version = "1.10", default-features = false, features = ["v4"] }
+
+[build-dependencies]
+embuild = "0.32"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = 1
+overflow-checks = false
+
+[profile.dev]
+opt-level = "s"
+debug = true
+
+[package.metadata.esp-idf-sys]
+esp_idf_version = "v5.2"

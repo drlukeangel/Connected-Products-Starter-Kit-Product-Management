@@ -1,0 +1,27 @@
+# Node / TS
+node_modules/
+dist/
+*.tsbuildinfo
+
+# CDK
+cloud/cdk/cdk.out/
+cloud/cdk/certs/
+*.pem
+*.key
+
+# Rust / cargo
+target/
+**/*.rs.bk
+device/rust/certs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
