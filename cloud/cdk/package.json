@@ -7,15 +7,19 @@
     "deploy": "cdk deploy",
     "destroy": "cdk destroy",
     "diff": "cdk diff",
-    "synth": "cdk synth"
+    "synth": "cdk synth",
+    "provision": "node scripts/provision-device.mjs",
+    "deprovision": "node scripts/deprovision-device.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
     "aws-cdk": "^2.150.0",
+    "esbuild": "^0.23.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2"
   },
   "dependencies": {
+    "@aws-sdk/client-iot": "^3.620.0",
     "aws-cdk-lib": "^2.150.0",
     "constructs": "^10.3.0",
     "source-map-support": "^0.5.21"

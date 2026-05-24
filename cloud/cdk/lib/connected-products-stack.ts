@@ -53,6 +53,10 @@ export class ConnectedProductsStack extends cdk.Stack {
     // -----------------------------------------------------------------
     const ingestFn = new nodejs.NodejsFunction(this, 'IngestFn', {
       entry: path.join(__dirname, '..', '..', 'lambda', 'src', 'ingest.ts'),
+      // Lambda source lives in cloud/lambda (sibling of cloud/cdk), so point
+      // the bundler at the repo root and the lambda's own lockfile.
+      projectRoot:      path.join(__dirname, '..', '..', '..'),
+      depsLockFilePath: path.join(__dirname, '..', '..', 'lambda', 'package-lock.json'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_20_X,
       memorySize: 256,
@@ -78,6 +82,8 @@ export class ConnectedProductsStack extends cdk.Stack {
     // -----------------------------------------------------------------
     const queryFn = new nodejs.NodejsFunction(this, 'QueryFn', {
       entry: path.join(__dirname, '..', '..', 'lambda', 'src', 'query.ts'),
+      projectRoot:      path.join(__dirname, '..', '..', '..'),
+      depsLockFilePath: path.join(__dirname, '..', '..', 'lambda', 'package-lock.json'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_20_X,
       memorySize: 256,
@@ -149,15 +155,14 @@ export class ConnectedProductsStack extends cdk.Stack {
     // Outputs — printed by `cdk deploy` so the team can wire devices +
     // dashboards without spelunking the AWS console.
     // -----------------------------------------------------------------
-    new cdk.CfnOutput(this, 'ThingName',       { value: thing.thingName! });
-    new cdk.CfnOutput(this, 'TelemetryTable',  { value: telemetryTable.tableName });
-    new cdk.CfnOutput(this, 'DashboardApiUrl', { value: httpApi.apiEndpoint });
+    new cdk.CfnOutput(this, 'ThingName',         { value: thing.thingName! });
+    new cdk.CfnOutput(this, 'TelemetryTableName', { value: telemetryTable.tableName });
+    new cdk.CfnOutput(this, 'DashboardApiUrl',   { value: httpApi.apiEndpoint });
     new cdk.CfnOutput(this, 'NextSteps', {
       value: [
-        '1. Provision a device cert: aws iot create-keys-and-certificate --set-as-active',
-        '2. Attach the cert to the Thing and Policy created in this stack.',
-        '3. Save cert + private key under cloud/cdk/certs/ for the simulator.',
-        '4. Run device/python/simulator.py with the endpoint shown above.',
+        '1. Mint + attach a device cert and fetch the endpoint: npm run provision',
+        '2. Run the simulator with the command that command prints.',
+        '3. Open the dashboard and point it at the DashboardApiUrl above.',
       ].join(' | '),
     });
   }

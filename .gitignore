@@ -6,6 +6,7 @@ dist/
 # CDK
 cloud/cdk/cdk.out/
 cloud/cdk/certs/
+cloud/cdk/cdk-outputs.json
 *.pem
 *.key
 

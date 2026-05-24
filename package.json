@@ -1,0 +1,9 @@
+{
+  "name": "iot-starter-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Connected Products Starter Kit — repo root. Holds the esbuild used by the CDK NodejsFunction bundler (Lambda source lives in cloud/lambda, a sibling of cloud/cdk).",
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  }
+}
