@@ -82,35 +82,44 @@ That's the kit. Lift any piece and replace it; the seams are clean.
 git clone https://github.com/drlukeangel/Connected-Products-Starter-Kit-Product-Management.git
 cd Connected-Products-Starter-Kit-Product-Management
 
-# 1. Deploy the cloud stack (one-time)
-cd cloud/cdk
+# 1. Install dependencies. The repo root provides the esbuild used to bundle
+#    the Lambdas locally, so no Docker is required.
 npm install
+( cd cloud/lambda && npm install )
+( cd cloud/cdk && npm install )
+
+# 2. Deploy the cloud stack (one-time)
+cd cloud/cdk
 npx cdk bootstrap        # if you've never used CDK in this account/region
-npx cdk deploy
+npx cdk deploy           # prints ThingName, TelemetryTableName, DashboardApiUrl
 
-# 2. The deploy prints these outputs you'll need:
-#    - ThingName
-#    - IoTEndpoint
-#    - DashboardApiUrl
-# It also writes device certs to ./certs/
+# 3. Provision a device identity. This mints + attaches an X.509 cert, looks
+#    up your account's IoT data endpoint, writes the cert/key to ./certs/,
+#    and prints the exact simulator command to run next.
+npm run provision
 
-# 3. Run the Python simulator pointed at your endpoint
+# 4. Run the Python simulator (paste the command `provision` just printed)
 cd ../../device/python
 pip install -r requirements.txt
 python simulator.py \
-  --endpoint <IoTEndpoint> \
-  --thing-name <ThingName> \
+  --endpoint <printed-by-provision> \
+  --thing-name pm-kit-device-1 \
   --cert ../../cloud/cdk/certs/device.cert.pem \
-  --key  ../../cloud/cdk/certs/device.private.key
+  --key  ../../cloud/cdk/certs/device.private.key \
+  --interval 5
 
-# 4. Open the dashboard
+# 5. Open the dashboard, then paste the DashboardApiUrl into the "API URL" field
 cd ../../dashboard
 npm install && npm run dev
 # → http://localhost:5173
 ```
 
-You should see fake telemetry events streaming into the dashboard within
-~5 seconds of starting the simulator.
+You should see telemetry events streaming into the dashboard within ~5
+seconds of starting the simulator.
+
+**Tearing down.** From `cloud/cdk`, run `npm run deprovision` (deletes the
+device cert) then `npx cdk destroy` (removes the stack). Everything is
+serverless / pay-per-request, so idle cost is negligible either way.
 
 ## Production shape (Rust on ESP32)
 
@@ -170,7 +179,7 @@ Answer those five, the wireless choice usually picks itself.
   AWS IoT FleetWise or roll your own per-tenant Thing Groups.
 - **No OTA firmware updates.** That deserves its own kit; Greengrass v2
   or AWS IoT Jobs are the obvious next step.
-- **No certificate rotation.** The CDK stack provisions a single device
+- **No certificate rotation.** `npm run provision` mints a single device
   cert. Cert rotation at fleet scale is a separate problem worth a
   dedicated post.
 - **No data-engineering / analytics layer.** Pair this with the [PII
