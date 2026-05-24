@@ -9,6 +9,12 @@ one** — the rubric they use to choose a wireless stack, the architecture
 they align on, and runnable reference code they fork instead of inventing
 from scratch.
 
+![The reference dashboard reading live device telemetry from the deployed stack: IoT Core → Lambda → DynamoDB → HTTP API.](docs/dashboard.png)
+
+*Above: the reference dashboard streaming live tool telemetry from the
+deployed AWS stack — simulated 20V MAX tools reporting battery, torque,
+usage, and fault codes per job site.*
+
 - **Three runtimes**: a Python simulator (quick start, no hardware needed),
   a Rust embedded variant (production-shaped, ready for ESP32 / Pi Pico W),
   and a TypeScript dashboard.
